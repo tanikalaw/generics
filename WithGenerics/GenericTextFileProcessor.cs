@@ -1,5 +1,7 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,8 +45,37 @@ namespace Generics.WithGenerics
 
         public static void SaveToTextFile<T>(List<T> data, string filepath) where T : class
         {
+            List<string> lines = new List<string>();
+            StringBuilder line = new StringBuilder();
+
+            if (data == null || data.Count() == 0)
+            {
+                throw new ArgumentNullException("data","You must populate the data parameter with at least one data");
+            }
+
+            var cols = data[0].GetType().GetProperties();
+
+            foreach (var col in cols)
+            {
+                line.Append(col.Name);
+                line.Append(",");
+            }
 
 
+            lines.Add(line.ToString().Substring(0, line.Length - 1));
+
+            foreach(var row in data)
+            {
+                line = new StringBuilder();
+                foreach (var col in cols)
+                {
+                    line.Append(col.GetValue(row));
+                    line.Append(",");
+                }
+                lines.Add(line.ToString().Substring(0, line.Length - 1));
+            }
+
+            System.IO.File.WriteAllLines(filepath, lines);
         }
     }
 }
