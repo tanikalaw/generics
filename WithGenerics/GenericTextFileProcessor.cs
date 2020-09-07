@@ -12,7 +12,7 @@ namespace Generics.WithGenerics
     {
         public static List<T> LoadFromtTextFile<T>(string filepath) where T : class, new()
         {
-            var lines = System.IO.File.ReadAllLines(filepath);
+            var lines = System.IO.File.ReadAllLines(filepath).ToList();
             List<T> output = new List<T>();
             T entry = new T();
             var cols = entry.GetType().GetProperties();
@@ -21,6 +21,8 @@ namespace Generics.WithGenerics
                 throw new ArgumentOutOfRangeException("");
 
             var headers = lines[0].Split(',');
+
+            lines.RemoveAt(0);
 
             foreach (var row in lines)
             {
